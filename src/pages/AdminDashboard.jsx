@@ -46,7 +46,7 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await api.get('/api/admin/all');
+      const response = await api.get('/api/admin/all?limit=100');
       setUsers(response.data.users || []);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
 
   const fetchPendingUsers = async () => {
     try {
-      const response = await api.get('/api/admin/all?approved=false');
+      const response = await api.get('/api/admin/all?approved=false&limit=100');
       setPendingUsers(response.data.users || []);
     } catch (error) {
       console.error('Error fetching pending users:', error);
@@ -145,7 +145,7 @@ const AdminDashboard = () => {
 
     setLoading(true);
     try {
-      await api.delete(`/api/admin/user/${userId}`);
+      await api.delete(`/api/admin/${userId}`);
       fetchUsers();
       alert('User deleted successfully!');
     } catch (error) {

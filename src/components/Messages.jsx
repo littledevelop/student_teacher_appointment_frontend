@@ -1,40 +1,71 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../api/axios';
 import './Messages.css';
+
 const Messages = () => {
-  const [messages, setMessages] = useState([]);
+  const [conversations, setConversations] = useState([]);
   const [teachers, setTeachers] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
   const [newMessage, setNewMessage] = useState('');
-  const [selectedChat, setSelectedChat] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sendingMessage, setSendingMessage] = useState(false);
   const [showTeachersList, setShowTeachersList] = useState(false);
   const [error, setError] = useState('');
-  useEffect(() => {
-    fetchMessages();
-    fetchTeachers();
-  }, []);
+  const messagesEndRef = useRef(null);
+  const pollIntervalRef = useRef(null);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       setLoading(true);
       const response = await api.get('/api/messages');
-      setMessages(response.data.messages || []);
+      setConversations(response.data.messages || []);
     } catch (err) {
       console.error('Failed to load messages:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchTeachers = async () => {
+  const fetchTeachers = useCallback(async () => {
     try {
       const response = await api.get('/api/teachers');
       setTeachers(response.data.teachers || []);
     } catch (err) {
       console.error('Failed to load teachers:', err);
     }
-  };
+  }, []);
+
+
+  const fetchConversations = useCallback(async () => {
+    await fetchMessages();
+  }, [fetchMessages]);
+
+  const startPolling = useCallback(() => {
+    // Polling for new messages every 30 seconds
+    pollIntervalRef.current = setInterval(() => {
+      fetchMessages();
+    }, 30000);
+  }, [fetchMessages]);
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
+    fetchConversations();
+    fetchTeachers();
+    startPolling();
+
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+      }
+    };
+  }, [fetchConversations, fetchTeachers, startPolling]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [scrollToBottom]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -44,29 +75,22 @@ const Messages = () => {
       return;
     }
     
-    if (!selectedChat) {
+    if (!selectedConversation) {
       setError('Please select a teacher');
       return;
     }
 
     setSendingMessage(true);
     setError('');
-    
+
     try {
-      console.log('Sending message to:', selectedChat._id || selectedChat.id);
+      console.log('Sending message to:', selectedConversation._id || selectedConversation.id);
       console.log('Message content:', newMessage);
       const response = await api.post('/api/messages/send', {
-        receiver: selectedChat._id || selectedChat.id,
+        receiver: selectedConversation._id || selectedConversation.id,
         subject: 'Message from Student',
         content: newMessage,
-        isRead: false,
-        sender: {
-          name: localStorage.getItem('userName'),
-          email: localStorage.getItem('userEmail')
-        },
-        readAt: Date.now(),
         appointment: null,
-
       });
       console.log(response)
       console.log('Message sent successfully:', response.data);
@@ -88,7 +112,7 @@ const Messages = () => {
 
   const startNewConversation = (teacher) => {
     setError('');
-    setSelectedChat({
+    setSelectedConversation({
       _id: teacher._id,
       id: teacher._id,
       sender: {
@@ -139,10 +163,10 @@ const Messages = () => {
               ))
             )}
           </div>
-        ) : messages.length === 0 ? (
+        ) : conversations.length === 0 ? (
           <div className="empty-messages">
             <p>No conversations yet</p>
-            <button 
+            <button
               className="btn-start-chat"
               onClick={() => setShowTeachersList(true)}
             >
@@ -151,11 +175,11 @@ const Messages = () => {
           </div>
         ) : (
           <div className="messages-scroll">
-            {messages.map((msg) => (
+            {conversations.map((msg) => (
               <div
                 key={msg._id}
-                className={`message-item ${selectedChat?._id === msg._id ? 'active' : ''}`}
-                onClick={() => setSelectedChat(msg)}
+                className={`message-item ${selectedConversation?._id === msg._id ? 'active' : ''}`}
+                onClick={() => setSelectedConversation(msg)}
               >
                 <div className="message-avatar">{msg.sender?.name?.charAt(0).toUpperCase() || '?'}</div>
                 <div className="message-preview">
@@ -170,20 +194,20 @@ const Messages = () => {
       </div>
 
       <div className="messages-chat-panel">
-        {selectedChat ? (
+        {selectedConversation ? (
           <>
             <div className="chat-header">
               <div>
-                <h4>{selectedChat.sender?.name}</h4>
-                <p>{selectedChat.sender?.email}</p>
+                <h4>{selectedConversation.sender?.name}</h4>
+                <p>{selectedConversation.sender?.email}</p>
               </div>
             </div>
             <div className="chat-messages">
-              {messages.find(m => m._id === selectedChat._id) && (
+              {conversations.find(m => m._id === selectedConversation._id) && (
                 <div className="message-bubble incoming">
-                  <p>{messages.find(m => m._id === selectedChat._id).content}</p>
+                  <p>{conversations.find(m => m._id === selectedConversation._id).content}</p>
                   <span className="message-time">
-                    {new Date(messages.find(m => m._id === selectedChat._id).createdAt).toLocaleDateString()}
+                    {new Date(conversations.find(m => m._id === selectedConversation._id).createdAt).toLocaleDateString()}
                   </span>
                 </div>
               )}
