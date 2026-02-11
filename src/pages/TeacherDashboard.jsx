@@ -46,13 +46,13 @@ const TeacherDashboard = () => {
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'approved': return 'approved';
-      case 'cancelled': return 'cancelled';
-      default: return 'pending';
-    }
-  };
+  // const getStatusColor = (status) => {
+  //   switch (status) {
+  //     case 'approved': return 'approved';
+  //     case 'cancelled': return 'cancelled';
+  //     default: return 'pending';
+  //   }
+  // };
 
   return (
     <div className="dashboard-container">

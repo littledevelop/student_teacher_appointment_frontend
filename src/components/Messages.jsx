@@ -6,7 +6,7 @@ import './Messages.css';
 const Messages = () => {
   const { user: currentUser } = useAuth();
   const currentUserId = currentUser?.id || currentUser?._id;
-  const currentUserIdStr = currentUserId != null ? String(currentUserId) : '';
+  // const currentUserIdStr = currentUserId != null ? String(currentUserId) : '';
 
   const [conversations, setConversations] = useState([]);
   const [teachers, setTeachers] = useState([]);
