@@ -226,9 +226,10 @@ const AdminDashboard = () => {
       <div className="dashboard-content">
         {/* Overview Section */}
         {activeSection === 'overview' && (
-          <div className="section-card">
-            <h2>System Overview</h2>
-            
+          <div className="section-card overview-card">
+            <div className="section-header">
+              <h2>📊 System Overview</h2>
+            </div>
             <div className="overview-section">
               <h3>Appointment Statistics</h3>
               <div className="stats-container">
@@ -678,13 +679,16 @@ const AdminDashboard = () => {
       {/* Messages Modal */}
       {showMessagesModal && (
         <div className="modal-overlay" onClick={() => setShowMessagesModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content messages-modal" onClick={(e) => e.stopPropagation()}>
             <button
+              type="button"
               className="modal-close-btn"
               onClick={() => setShowMessagesModal(false)}
+              aria-label="Close"
             >
               ✕
             </button>
+            <div className="modal-messages-title">💬 Messages</div>
             <Messages />
           </div>
         </div>

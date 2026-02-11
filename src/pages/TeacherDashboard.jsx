@@ -110,6 +110,7 @@ const TeacherDashboard = () => {
                       <p>Date: {new Date(appointment.date).toLocaleDateString()}</p>
                       <p>Time: {appointment.time}</p>
                       <p>Purpose: {appointment.purpose}</p>
+                      
                     </div>
                     <div className="appointment-actions">
                       <button
@@ -122,6 +123,7 @@ const TeacherDashboard = () => {
                         onClick={() => handleStatusUpdate(appointment._id, 'cancelled')}
                         disabled={loading}
                         className="btn-danger"
+
                       >
                         Cancel
                       </button>

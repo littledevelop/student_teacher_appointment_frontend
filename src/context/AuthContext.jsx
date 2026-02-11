@@ -52,11 +52,32 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (name, email, password, role) => {
+    const register = async (nameOrFormData, email, password, role) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await api.post('/api/register', { name, email, password, role });
+            // Support both: register(formData) and register(name, email, password, role)
+            const isFormData = nameOrFormData && typeof nameOrFormData === 'object' && !email;
+            const payload = isFormData
+                ? (() => {
+                    const fd = nameOrFormData;
+                    const body = { name: fd.name, email: fd.email, password: fd.password, role: fd.role || 'student' };
+                    if (fd.role === 'teacher') {
+                        if (fd.department) body.department = fd.department;
+                        if (fd.subject) body.subject = fd.subject;
+                        if (fd.specialization) body.specialization = fd.specialization;
+                        if (fd.officeHours) body.officeHours = fd.officeHours;
+                        if (fd.bio) body.bio = fd.bio;
+                    }
+                    if (fd.role === 'student' && (fd.studentId || fd.year || fd.course)) {
+                        if (fd.studentId) body.studentId = fd.studentId;
+                        if (fd.year) body.year = fd.year;
+                        if (fd.course) body.course = fd.course;
+                    }
+                    return body;
+                })()
+                : { name: nameOrFormData, email, password, role };
+            const response = await api.post('/api/register', payload);
             const userData = response.data.user;
             const authToken = response.data.token;
             

@@ -35,26 +35,19 @@ const StudentDashboard = () => {
     }
   };
 
-  const fetchTeachers = async () => {
+  const fetchTeachers = async (search = '') => {
     try {
-      const response = await api.get('/api/teachers');
+      const params = search.trim() ? { search: search.trim() } : {};
+      const response = await api.get('/api/teachers', { params });
       setTeachers(response.data.teachers || []);
     } catch (error) {
-      console.error('Error fetching teachers:', error);
+      setError(error.response?.data?.message || 'Failed to fetch teachers');
     }
   };
 
   const handleSearchTeachers = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      const filtered = teachers.filter(t => 
-        t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t.email.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setTeachers(filtered);
-    } else {
-      fetchTeachers();
-    }
+    fetchTeachers(searchQuery);
   };
 
   const handleBookingChange = (e) => {
