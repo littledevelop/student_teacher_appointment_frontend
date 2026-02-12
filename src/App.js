@@ -8,6 +8,9 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
+  // Uncomment the line below to clear localStorage on every app restart (useful for testing)
+  // localStorage.clear();
+
   return (
     <div className="App">
       <Router>
@@ -39,6 +42,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* Catch-all route - redirect unknown paths to login */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </div>

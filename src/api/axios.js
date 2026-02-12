@@ -1,15 +1,9 @@
 import axios from 'axios';
 
-// Backend base URL (no trailing slash). Set REACT_APP_API_URL in .env e.g. http://localhost:5000
-const API_BASE_URL =
-  process.env.REACT_APP_API_URL ||
-  process.env.REACT_APP_Backend_URL ||
-  'http://localhost:5000';
-
+console.log(process.env.REACT_APP_API_URL);
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000',
   withCredentials: true,
-  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -35,9 +29,9 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Unauthorized - clear storage and redirect to login
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      // localStorage.removeItem('user');
+      // localStorage.removeItem('token');
+      // window.location.href = '/login';
     }
     return Promise.reject(error);
   }

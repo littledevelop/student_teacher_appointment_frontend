@@ -13,6 +13,28 @@ const TeacherDashboard = () => {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showMessagesModal, setShowMessagesModal] = useState(false);
   const [activeSection, setActiveSection] = useState('requests');
+  const [avatarError, setAvatarError] = useState(false);
+
+  // Helper function to get profile picture URL
+  const getProfilePictureUrl = () => {
+    if (!user?.profilePicture) return null;
+    // If it's a relative path from backend, construct full URL
+    if (user.profilePicture.startsWith('/uploads/')) {
+      return `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${user.profilePicture}`;
+    }
+    return user.profilePicture;
+  };
+
+  // Helper to get initials for fallback avatar
+  const getInitials = () => {
+    if (!user?.name) return '?';
+    return user.name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   useEffect(() => {
     fetchAppointments();
@@ -60,6 +82,20 @@ const TeacherDashboard = () => {
         <div className="dashboard-header-content">
           <div className="header-content">
             <h1>Teacher Dashboard</h1>
+            <div className="avatar-container">
+              {!avatarError && getProfilePictureUrl() ? (
+                <img 
+                  src={getProfilePictureUrl()} 
+                  alt="Teacher Avatar" 
+                  className="avatar" 
+                  onError={() => setAvatarError(true)}
+                />
+              ) : (
+                <div className="avatar avatar-fallback">
+                  {getInitials()}
+                </div>
+              )}
+            </div>
             <p>Welcome, {user?.name}</p>
           </div>
           <div className="header-actions">

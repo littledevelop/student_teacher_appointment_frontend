@@ -1571,3 +1571,44 @@ form {
     margin-left: 0;
   }
 }
+
+/* ============================================
+   AVATAR STYLING
+   ============================================ */
+
+.avatar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 24px;
+  color: white;
+  transition: all var(--transition-base);
+}
+
+.avatar:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.avatar-fallback {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  cursor: default;
+}
+
+.avatar-fallback:hover {
+  transform: scale(1.05);
+}
