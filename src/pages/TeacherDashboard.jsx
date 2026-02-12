@@ -81,7 +81,6 @@ const TeacherDashboard = () => {
       <header className="dashboard-header">
         <div className="dashboard-header-content">
           <div className="header-content">
-            <h1>Teacher Dashboard</h1>
             <div className="avatar-container">
               {!avatarError && getProfilePictureUrl() ? (
                 <img 
@@ -96,6 +95,7 @@ const TeacherDashboard = () => {
                 </div>
               )}
             </div>
+            <h1>Teacher Dashboard</h1>
             <p>Welcome, {user?.name}</p>
           </div>
           <div className="header-actions">

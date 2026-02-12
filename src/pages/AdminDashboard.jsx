@@ -69,7 +69,6 @@ const AdminDashboard = () => {
   const fetchUsers = async () => {
     try {
       const response = await api.get('/api/admin/all?limit=100');
-      console.log(response.data);
       setUsers(response.data.users || []);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -138,8 +137,7 @@ const AdminDashboard = () => {
       });
       fetchUsers();
       alert('User created successfully!');
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to create user');
+    } catch (error) {setError(error.response?.data?.message || 'Failed to create user');
     } finally {
       setLoading(false);
     }
@@ -200,7 +198,6 @@ const AdminDashboard = () => {
       <header className="dashboard-header">
         <div className="dashboard-header-content">
           <div className="header-content">
-            <h1>Admin Dashboard</h1>
             <div className="avatar-container">
               {!avatarError && getProfilePictureUrl() ? (
                 <img 
@@ -215,6 +212,7 @@ const AdminDashboard = () => {
                 </div>
               )}
             </div>
+            <h1>Admin Dashboard</h1>
             <p>Welcome, {user?.name}</p>
           </div>
           <div className="header-actions">

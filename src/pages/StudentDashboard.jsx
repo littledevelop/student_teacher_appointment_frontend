@@ -112,7 +112,6 @@ const StudentDashboard = () => {
       <header className="dashboard-header">
         <div className="dashboard-header-content">
           <div className="header-content">
-            <h1>Student Dashboard</h1>
             <div className="avatar-container">
               {!avatarError && getProfilePictureUrl() ? (
                 <img 
@@ -127,6 +126,7 @@ const StudentDashboard = () => {
                 </div>
               )}
             </div>
+            <h1>Student Dashboard</h1>
             <p>Welcome, {user?.name}</p>
           </div>
           <div className="header-actions">
